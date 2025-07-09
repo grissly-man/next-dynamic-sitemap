@@ -10,6 +10,7 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    environment: publish
 
     steps:
       - uses: actions/checkout@v3
@@ -26,10 +27,6 @@ jobs:
 
       - name: Run build (if any)
         run: npm run build  # optional, only if you have a build step
-      - name: Help
-        run: echo $NODE_AUTH_TOKEN
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
 
       - name: Publish to npm
         run: npm publish --access public
