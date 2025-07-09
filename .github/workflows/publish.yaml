@@ -28,7 +28,7 @@ jobs:
       - name: Build package
         run: npm run build  # if you have a build step
       - name: Help
-        run: cat .npmrc
+        run: cat ~/.npmrc
 
       - name: Publish package
         run: npm publish
