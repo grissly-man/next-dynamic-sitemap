@@ -1,0 +1,24 @@
+{
+  "name": "@grissly-man/next-dymamic-sitemap",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "@types/xml2js": "^0.4.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "next": "^15.3.5",
+    "xml2js": "^0.6.2"
+  },
+  "files": [
+    "dist"
+  ]
+}
