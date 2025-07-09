@@ -20,7 +20,7 @@ jobs:
           registry-url: 'https://npm.pkg.github.com/'
 
       - name: Authenticate to GitHub Packages
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
+        run: npm config set //npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}
 
       - name: Install dependencies
         run: npm install
@@ -28,7 +28,7 @@ jobs:
       - name: Build package
         run: npm run build  # if you have a build step
       - name: Help
-        run: cat ~/.npmrc
+        run: cat /home/runner/work/_temp/.npmrc
 
       - name: Publish package
         run: npm publish
