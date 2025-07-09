@@ -2,8 +2,8 @@ name: Publish Package
 
 on:
   push:
-    branches:
-      - 'main'        # Trigger on version tags like v1.0.0
+    tags:
+      - 'v*'        # Trigger on version tags like v1.0.0
 
 jobs:
   publish:
@@ -27,8 +27,6 @@ jobs:
 
       - name: Build package
         run: npm run build  # if you have a build step
-      - name: Help
-        run: cat /home/runner/work/_temp/.npmrc
 
       - name: Publish package
         run: npm publish
