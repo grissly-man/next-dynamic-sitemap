@@ -1,5 +1,6 @@
 {
   "name": "@grissly-man/next-dymamic-sitemap",
+  "repository": "https://github.com/grissly-man/next-dynamic-sitemap.git",
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
