@@ -2,6 +2,9 @@ import path from "node:path";
 import {readdir, stat, rm, writeFile} from "fs/promises"
 import {build} from "esbuild";
 import {Builder} from "xml2js";
+import {config as configureDotEnv} from "dotenv-flow";
+
+configureDotEnv();
 
 const PAGES = "pages";
 const APP = "app";
@@ -79,7 +82,8 @@ function parameterizePath(pagePath: string, pageURLPath: string, params: Record<
 
     return {
         loc: parameterizedPath,
-        lastmod
+        lastmod,
+        priority: 0.4 // generated pages are lower priority than static pages
     }
 }
 
@@ -100,6 +104,7 @@ async function introspectPage(root: string, page: string): Promise<SiteMapURL[]>
     return [{
         loc: generateURL(pageURLPath),
         lastmod,
+        priority: pageURLPath ? .8 : 1 // home page gets higher priority
     }]
 }
 
