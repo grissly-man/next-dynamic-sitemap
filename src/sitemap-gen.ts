@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import path from "node:path";
-import { readdir, stat, rm, writeFile } from "fs/promises";
+import { readdir, stat, rm, writeFile, mkdir } from "fs/promises";
 import { build } from "esbuild";
 import { Builder } from "xml2js";
 import { config as configureDotEnv } from "dotenv-flow";
@@ -87,7 +87,7 @@ function parameterizePath(
   }
 
   return {
-    loc: parameterizedPath,
+    loc: generateURL(parameterizedPath),
     lastmod,
     priority: 0.4, // generated pages are lower priority than static pages
   };
@@ -142,6 +142,7 @@ async function recurseAppDir(root: string) {
 }
 
 async function generateSitemapPublic() {
+  await mkdir(OUTFILE_ROOT, { recursive: true });
   const dir = process.cwd();
   const pagesSrcDir = path.join(SRC, APP);
   const appSrcDir = path.join(SRC, APP);
@@ -165,6 +166,11 @@ async function generateSitemapPublic() {
 
   if (hasNonSrcRootApp) {
     const segmentUrls = await recurseAppDir(appDir);
+    urls.push(...segmentUrls);
+  }
+
+  if (hasSrcRootApp) {
+    const segmentUrls = await recurseAppDir(appSrcDir);
     urls.push(...segmentUrls);
   }
 
