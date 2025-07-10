@@ -33,5 +33,33 @@
   "files": [
     "dist",
     "README.md"
+  ],
+  "keywords": [
+    "nextjs",
+    "next.js",
+    "sitemap",
+    "sitemap-generator",
+    "seo",
+    "static-site-generation",
+    "ssg",
+    "app-router",
+    "file-based-routing",
+    "cli",
+    "cli-tool",
+    "xml",
+    "nodejs",
+    "web-crawlers",
+    "googlebot",
+    "search-engine-optimization",
+    "nextjs-plugin",
+    "static-export",
+    "dynamic-routing",
+    "revalidate",
+    "middleware",
+    "url-mapping",
+    "routes",
+    "website-indexing",
+    "open-graph",
+    "robots.txt"
   ]
 }
