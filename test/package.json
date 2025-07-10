@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "npm test -ws"
+    "test": "npm ci -ws && npm test -ws"
   },
   "workspaces": [
     "apps/*"
