@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check format
+        run: npm run check-format
+
       - name: Run build (if any)
         run: npm run build # optional, only if you have a build step
 

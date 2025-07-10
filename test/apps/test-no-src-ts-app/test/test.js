@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const assert = require('assert');
-const path = require('path');
-const {readFile} = require("fs/promises");
+const assert = require("assert");
+const path = require("path");
+const { readFile } = require("fs/promises");
 
 async function test() {
   const [actual, expected] = await Promise.all([
@@ -13,4 +13,4 @@ async function test() {
   assert.equal(actual.toString(), expected.toString());
 }
 
-test()
+test();

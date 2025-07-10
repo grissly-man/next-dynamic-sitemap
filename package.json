@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "cd test && npm test",
-    "build": "tsc"
+    "build": "tsc",
+    "format": "prettier -w .",
+    "check-format": "prettier --check ."
   },
   "publishConfig": {
     "access": "public"

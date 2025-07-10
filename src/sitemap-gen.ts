@@ -19,6 +19,7 @@ const PAGE_RE = new RegExp(PAGE_RE_TEXT);
 const PAGE_SUFFIX_RE = new RegExp(PAGE_RE_SUFFIX_TEXT);
 
 const OUTFILE_ROOT = path.join(process.cwd(), ".sitemap-gen-tmp");
+const PUBLIC_DIR = path.join(process.cwd(), "public");
 
 const BASE_URL = new URL(process.env.SITEMAP_GEN_BASE_URL!);
 
@@ -142,7 +143,10 @@ async function recurseAppDir(root: string) {
 }
 
 async function generateSitemapPublic() {
-  await mkdir(OUTFILE_ROOT, { recursive: true });
+  await Promise.all([
+    mkdir(OUTFILE_ROOT, { recursive: true }),
+    mkdir(PUBLIC_DIR, { recursive: true }),
+  ]);
   const dir = process.cwd();
   const pagesSrcDir = path.join(SRC, APP);
   const appSrcDir = path.join(SRC, APP);
