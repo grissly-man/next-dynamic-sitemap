@@ -1,5 +1,5 @@
 {
-  "name": "test-src-ts-app",
+  "name": "test-no-src-ts-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {

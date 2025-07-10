@@ -1,5 +1,5 @@
 {
-  "name": "test-src-ts-app",
+  "name": "test-src-js-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -16,10 +16,6 @@
     "@grissly-man/next-dynamic-sitemap": "file://../../../"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
     "@tailwindcss/postcss": "^4",
     "tailwindcss": "^4",
     "eslint": "^9",
