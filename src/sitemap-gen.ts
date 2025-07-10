@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 import path from "node:path";
-import {readdir, stat, rm, writeFile} from "fs/promises"
-import {build} from "esbuild";
-import {Builder} from "xml2js";
-import {config as configureDotEnv} from "dotenv-flow";
+import { readdir, stat, rm, writeFile } from "fs/promises";
+import { build } from "esbuild";
+import { Builder } from "xml2js";
+import { config as configureDotEnv } from "dotenv-flow";
 
 configureDotEnv();
 
@@ -23,147 +23,168 @@ const OUTFILE_ROOT = path.join(process.cwd(), ".sitemap-gen-tmp");
 const BASE_URL = new URL(process.env.SITEMAP_GEN_BASE_URL!);
 
 export type SiteMap = {
-    urlset: SiteMapURLSet;
-}
+  urlset: SiteMapURLSet;
+};
 
 export type SiteMapURLSet = {
-    $: {
-        xmlns: 'http://www.sitemaps.org/schemas/sitemap/0.9'
-    },
-    url: SiteMapURL[]
-}
+  $: {
+    xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9";
+  };
+  url: SiteMapURL[];
+};
 
 export type SiteMapURL = {
-    loc: string;
-    changefreq?: "hourly";
-    priority?: number;
-    lastmod?: string;
-}
+  loc: string;
+  changefreq?: "hourly";
+  priority?: number;
+  lastmod?: string;
+};
 
 function generateURL(path: string) {
-    return new URL(path, BASE_URL).toString();
+  return new URL(path, BASE_URL).toString();
 }
 
 async function dirExists(page: string) {
-    try {
-        await stat(path.join(page));
-        return true;
-    } catch (error) {
-        return false;
-    }
+  try {
+    await stat(path.join(page));
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
 async function bundlePage(page: string) {
-    const outfile = path.join(OUTFILE_ROOT, page.replace(PAGE_RE, "page.cjs"));
-    await build({
-        entryPoints: [path.join(process.cwd(), page)],
-        outfile,
-        platform: "node",
-        bundle: true,
-        format: "cjs",
-        sourcemap: false,
-    });
-    return import(outfile);
+  const outfile = path.join(OUTFILE_ROOT, page.replace(PAGE_RE, "page.cjs"));
+  await build({
+    entryPoints: [path.join(process.cwd(), page)],
+    outfile,
+    platform: "node",
+    bundle: true,
+    format: "cjs",
+    sourcemap: false,
+  });
+  return import(outfile);
 }
 
-function parameterizePath(pagePath: string, pageURLPath: string, params: Record<string, any>): SiteMapURL {
-    let parameterizedPath = pagePath;
-    let lastmod = pageURLPath;
+function parameterizePath(
+  pagePath: string,
+  pageURLPath: string,
+  params: Record<string, any>,
+): SiteMapURL {
+  let parameterizedPath = pagePath;
+  let lastmod = pageURLPath;
 
-    for (let key in params) {
-        const param = params[key];
-        if (typeof param === "string") {
-            const replaceValue = new RegExp(`\\[${key}]`, "g");
-            parameterizedPath = parameterizedPath.replace(replaceValue, param);
-        }
+  for (let key in params) {
+    const param = params[key];
+    if (typeof param === "string") {
+      const replaceValue = new RegExp(`\\[${key}]`, "g");
+      parameterizedPath = parameterizedPath.replace(replaceValue, param);
     }
+  }
 
-    if (params.lastModified instanceof Date) {
-        lastmod = params.lastModified.toISOString();
-    }
+  if (params.lastModified instanceof Date) {
+    lastmod = params.lastModified.toISOString();
+  }
 
-    return {
-        loc: parameterizedPath,
-        lastmod,
-        priority: 0.4 // generated pages are lower priority than static pages
-    }
+  return {
+    loc: parameterizedPath,
+    lastmod,
+    priority: 0.4, // generated pages are lower priority than static pages
+  };
 }
 
-async function introspectPage(root: string, page: string): Promise<SiteMapURL[]> {
-    const pagePath = path.join(root, page);
-    const pageURLPath = page.replace(PAGE_SUFFIX_RE, "");
-    const pageStats = await stat(path.join(process.cwd(), pagePath));
-    const lastmod = new Date(pageStats.mtime).toISOString();
+async function introspectPage(
+  root: string,
+  page: string,
+): Promise<SiteMapURL[]> {
+  const pagePath = path.join(root, page);
+  const pageURLPath = page.replace(PAGE_SUFFIX_RE, "");
+  const pageStats = await stat(path.join(process.cwd(), pagePath));
+  const lastmod = new Date(pageStats.mtime).toISOString();
 
-    if (/\[/.test(pagePath)) {
-        const bundle = await bundlePage(pagePath);
-        if ("generateStaticParams" in bundle && typeof bundle.generateStaticParams === "function") {
-            const result: Record<string, any>[] = await bundle.generateStaticParams();
-            return result.map((params) => parameterizePath(pageURLPath, lastmod, params));
-        }
+  if (/\[/.test(pagePath)) {
+    const bundle = await bundlePage(pagePath);
+    if (
+      "generateStaticParams" in bundle &&
+      typeof bundle.generateStaticParams === "function"
+    ) {
+      const result: Record<string, any>[] = await bundle.generateStaticParams();
+      return result.map((params) =>
+        parameterizePath(pageURLPath, lastmod, params),
+      );
     }
+  }
 
-    return [{
-        loc: generateURL(pageURLPath),
-        lastmod,
-        priority: pageURLPath ? .8 : 1 // home page gets higher priority
-    }]
+  return [
+    {
+      loc: generateURL(pageURLPath),
+      lastmod,
+      priority: pageURLPath ? 0.8 : 1, // home page gets higher priority
+    },
+  ];
 }
 
 async function recurseAppDir(root: string) {
-    const contents = await readdir(path.join(process.cwd(), root), {recursive: true});
-    const pages = contents.filter((page) => PAGE_RE.test(page));
-    const metadata = await Promise.all(pages.map(async (page) => introspectPage(root, page)))
-    const metadataFlattened: SiteMapURL[] = [];
+  const contents = await readdir(path.join(process.cwd(), root), {
+    recursive: true,
+  });
+  const pages = contents.filter((page) => PAGE_RE.test(page));
+  const metadata = await Promise.all(
+    pages.map(async (page) => introspectPage(root, page)),
+  );
+  const metadataFlattened: SiteMapURL[] = [];
 
-    metadata.forEach((page) => {
-        metadataFlattened.push(...page);
-    })
+  metadata.forEach((page) => {
+    metadataFlattened.push(...page);
+  });
 
-    return metadataFlattened;
+  return metadataFlattened;
 }
 
 async function generateSitemapPublic() {
-    const dir = process.cwd();
-    const pagesSrcDir = path.join(SRC, APP);
-    const appSrcDir = path.join(SRC, APP);
-    const pagesDir = path.join(PAGES);
-    const appDir = path.join(APP);
+  const dir = process.cwd();
+  const pagesSrcDir = path.join(SRC, APP);
+  const appSrcDir = path.join(SRC, APP);
+  const pagesDir = path.join(PAGES);
+  const appDir = path.join(APP);
 
-    const pagesSrcDirFull = path.join(dir, pagesSrcDir);
-    const appSrcDirFull = path.join(dir, appSrcDir);
-    const pagesDirFull = path.join(dir, pagesDir);
-    const appDirFull = path.join(dir, appDir);
+  const pagesSrcDirFull = path.join(dir, pagesSrcDir);
+  const appSrcDirFull = path.join(dir, appSrcDir);
+  const pagesDirFull = path.join(dir, pagesDir);
+  const appDirFull = path.join(dir, appDir);
 
-    const urls: SiteMapURL[] = [];
+  const urls: SiteMapURL[] = [];
 
-    const [hasSrcRootPages, hasSrcRootApp, hasNonSrcRootPages, hasNonSrcRootApp] = await Promise.all([
-        dirExists(pagesSrcDirFull),
-        dirExists(appSrcDirFull),
-        dirExists(pagesDirFull),
-        dirExists(appDirFull),
+  const [hasSrcRootPages, hasSrcRootApp, hasNonSrcRootPages, hasNonSrcRootApp] =
+    await Promise.all([
+      dirExists(pagesSrcDirFull),
+      dirExists(appSrcDirFull),
+      dirExists(pagesDirFull),
+      dirExists(appDirFull),
     ]);
 
-    if (hasNonSrcRootApp) {
-        const segmentUrls = await recurseAppDir(appDir);
-        urls.push(...segmentUrls);
-    }
+  if (hasNonSrcRootApp) {
+    const segmentUrls = await recurseAppDir(appDir);
+    urls.push(...segmentUrls);
+  }
 
-    const map: SiteMap = {
-        urlset: {
-            $: {
-                xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9"
-            },
-            url: urls
-        }
-    }
+  const map: SiteMap = {
+    urlset: {
+      $: {
+        xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
+      },
+      url: urls,
+    },
+  };
 
-    const builder = new Builder();
-    const xmlMap = builder.buildObject(map);
+  const builder = new Builder();
+  const xmlMap = builder.buildObject(map);
 
-    await writeFile(path.join(dir, "public/sitemap.xml"), xmlMap);
+  await writeFile(path.join(dir, "public/sitemap.xml"), xmlMap);
 }
 
-generateSitemapPublic().then(() => console.log('Generated sitemap public')).finally(async () => {
-    await rm(OUTFILE_ROOT, {recursive: true});
-});
+generateSitemapPublic()
+  .then(() => console.log("Generated sitemap public"))
+  .finally(async () => {
+    await rm(OUTFILE_ROOT, { recursive: true });
+  });
