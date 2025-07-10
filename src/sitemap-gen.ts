@@ -144,13 +144,6 @@ async function generateSitemapPublic() {
         dirExists(appDirFull),
     ]);
 
-    console.error([hasSrcRootPages, hasSrcRootApp, hasNonSrcRootPages, hasNonSrcRootApp]);
-    console.error(pagesSrcDirFull,
-        appSrcDirFull,
-        pagesDirFull,
-        appDirFull,
-    )
-
     if (hasNonSrcRootApp) {
         const segmentUrls = await recurseAppDir(appDir);
         urls.push(...segmentUrls);
