@@ -1,10 +1,10 @@
 import path from "node:path";
-import {mkdir, stat, writeFile} from "fs/promises";
-import {Builder} from "xml2js";
-import {recurseAppDir} from "./generate-app";
-import {OUTFILE_ROOT, PUBLIC_DIR} from "./constants";
-import {SiteMap, SiteMapURL} from "./types";
-import {recursePagesDir} from "./generate-pages";
+import { mkdir, stat, writeFile } from "fs/promises";
+import { Builder } from "xml2js";
+import { recurseAppDir } from "./generate-app";
+import { OUTFILE_ROOT, PUBLIC_DIR } from "./constants";
+import { SiteMap, SiteMapURL } from "./types";
+import { recursePagesDir } from "./generate-pages";
 
 const PAGES = "pages";
 const APP = "app";
