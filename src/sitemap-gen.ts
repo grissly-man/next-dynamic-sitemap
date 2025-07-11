@@ -1,49 +1,14 @@
-#!/usr/bin/env node
-
 import path from "node:path";
-import { readdir, stat, rm, writeFile, mkdir } from "fs/promises";
-import { build } from "esbuild";
-import { Builder } from "xml2js";
-import { config as configureDotEnv } from "dotenv-flow";
-
-configureDotEnv();
+import {mkdir, stat, writeFile} from "fs/promises";
+import {Builder} from "xml2js";
+import {recurseAppDir} from "./generate-app";
+import {OUTFILE_ROOT, PUBLIC_DIR} from "./constants";
+import {SiteMap, SiteMapURL} from "./types";
+import {recursePagesDir} from "./generate-pages";
 
 const PAGES = "pages";
 const APP = "app";
 const SRC = "src";
-
-const PAGE_RE_TEXT = "page.[tj]sx?$";
-const PAGE_RE_SUFFIX_TEXT = `/?${PAGE_RE_TEXT}`;
-
-const PAGE_RE = new RegExp(PAGE_RE_TEXT);
-const PAGE_SUFFIX_RE = new RegExp(PAGE_RE_SUFFIX_TEXT);
-
-const OUTFILE_ROOT = path.join(process.cwd(), ".sitemap-gen-tmp");
-const PUBLIC_DIR = path.join(process.cwd(), "public");
-
-const BASE_URL = new URL(process.env.SITEMAP_GEN_BASE_URL!);
-
-export type SiteMap = {
-  urlset: SiteMapURLSet;
-};
-
-export type SiteMapURLSet = {
-  $: {
-    xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9";
-  };
-  url: SiteMapURL[];
-};
-
-export type SiteMapURL = {
-  loc: string;
-  changefreq?: "hourly";
-  priority?: number;
-  lastmod?: string;
-};
-
-function generateURL(path: string) {
-  return new URL(path, BASE_URL).toString();
-}
 
 async function dirExists(page: string) {
   try {
@@ -54,101 +19,13 @@ async function dirExists(page: string) {
   }
 }
 
-async function bundlePage(page: string) {
-  const outfile = path.join(OUTFILE_ROOT, page.replace(PAGE_RE, "page.cjs"));
-  await build({
-    entryPoints: [path.join(process.cwd(), page)],
-    outfile,
-    platform: "node",
-    bundle: true,
-    format: "cjs",
-    sourcemap: false,
-  });
-  return import(outfile);
-}
-
-function parameterizePath(
-  pagePath: string,
-  pageURLPath: string,
-  params: Record<string, any>,
-): SiteMapURL {
-  let parameterizedPath = pagePath;
-  let lastmod = pageURLPath;
-
-  for (let key in params) {
-    const param = params[key];
-    if (typeof param === "string") {
-      const replaceValue = new RegExp(`\\[${key}]`, "g");
-      parameterizedPath = parameterizedPath.replace(replaceValue, param);
-    }
-  }
-
-  if (params.lastModified instanceof Date) {
-    lastmod = params.lastModified.toISOString();
-  }
-
-  return {
-    loc: generateURL(parameterizedPath),
-    lastmod,
-    priority: 0.4, // generated pages are lower priority than static pages
-  };
-}
-
-async function introspectPage(
-  root: string,
-  page: string,
-): Promise<SiteMapURL[]> {
-  const pagePath = path.join(root, page);
-  const pageURLPath = page.replace(PAGE_SUFFIX_RE, "");
-  const pageStats = await stat(path.join(process.cwd(), pagePath));
-  const lastmod = new Date(pageStats.mtime).toISOString();
-
-  if (/\[/.test(pagePath)) {
-    const bundle = await bundlePage(pagePath);
-    if (
-      "generateStaticParams" in bundle &&
-      typeof bundle.generateStaticParams === "function"
-    ) {
-      const result: Record<string, any>[] = await bundle.generateStaticParams();
-      return result.map((params) =>
-        parameterizePath(pageURLPath, lastmod, params),
-      );
-    }
-  }
-
-  return [
-    {
-      loc: generateURL(pageURLPath),
-      lastmod,
-      priority: pageURLPath ? 0.8 : 1, // home page gets higher priority
-    },
-  ];
-}
-
-async function recurseAppDir(root: string) {
-  const contents = await readdir(path.join(process.cwd(), root), {
-    recursive: true,
-  });
-  const pages = contents.filter((page) => PAGE_RE.test(page));
-  const metadata = await Promise.all(
-    pages.map(async (page) => introspectPage(root, page)),
-  );
-  const metadataFlattened: SiteMapURL[] = [];
-
-  metadata.forEach((page) => {
-    metadataFlattened.push(...page);
-  });
-
-  return metadataFlattened;
-}
-
-async function generateSitemapPublic() {
+export async function generateSitemapPublic() {
   await Promise.all([
     mkdir(OUTFILE_ROOT, { recursive: true }),
     mkdir(PUBLIC_DIR, { recursive: true }),
   ]);
   const dir = process.cwd();
-  const pagesSrcDir = path.join(SRC, APP);
+  const pagesSrcDir = path.join(SRC, PAGES);
   const appSrcDir = path.join(SRC, APP);
   const pagesDir = path.join(PAGES);
   const appDir = path.join(APP);
@@ -178,6 +55,16 @@ async function generateSitemapPublic() {
     urls.push(...segmentUrls);
   }
 
+  if (hasNonSrcRootPages) {
+    const segmentUrls = await recursePagesDir(pagesDir);
+    urls.push(...segmentUrls);
+  }
+
+  if (hasSrcRootPages) {
+    const segmentUrls = await recursePagesDir(pagesSrcDir);
+    urls.push(...segmentUrls);
+  }
+
   const map: SiteMap = {
     urlset: {
       $: {
@@ -192,9 +79,3 @@ async function generateSitemapPublic() {
 
   await writeFile(path.join(dir, "public/sitemap.xml"), xmlMap);
 }
-
-generateSitemapPublic()
-  .then(() => console.log("Generated sitemap public"))
-  .finally(async () => {
-    await rm(OUTFILE_ROOT, { recursive: true });
-  });

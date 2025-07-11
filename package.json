@@ -1,10 +1,11 @@
 {
   "name": "@grissly-man/next-dymamic-sitemap",
   "repository": "https://github.com/grissly-man/next-dynamic-sitemap.git",
+  "homepage": "https://grissly-man.com/projects/sitemap-generator",
   "version": "1.0.10",
   "main": "dist/index.js",
   "bin": {
-    "sitemap-gen": "dist/sitemap-gen.js"
+    "sitemap-gen": "dist/bin-sitemap-gen.js"
   },
   "scripts": {
     "test": "cd test && npm test",
