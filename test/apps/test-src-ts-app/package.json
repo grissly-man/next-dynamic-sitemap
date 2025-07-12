@@ -13,7 +13,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "next": "15.3.5",
-    "@grissly-man/next-dynamic-sitemap": "file://../../../"
+    "next-dynamic-sitemap": "file://../../../"
   },
   "devDependencies": {
     "typescript": "^5",
