@@ -25,4 +25,14 @@
     <lastmod>1970-01-01T00:00:00.000Z</lastmod>
     <priority>0.4</priority>
   </url>
+  <url>
+    <loc>https://mysite.local/dynamic-path/page-1/sub-page-1</loc>
+    <lastmod>2025-07-12T21:53:33.307Z</lastmod>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://mysite.local/dynamic-path/page-2/sub-page-2</loc>
+    <lastmod>1970-01-01T00:00:00.000Z</lastmod>
+    <priority>0.4</priority>
+  </url>
 </urlset>
