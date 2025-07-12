@@ -1,4 +1,4 @@
-# 🗺️ @grissly-man/next-dynamic-sitemap
+# 🗺️ next-dynamic-sitemap
 
 A zero-config dynamic sitemap generator for **Next.js** apps using the **App Router** or **Pages Router** — with full support for `generateStaticParams` and `getStaticPaths`. Automatically includes `lastModified` data from your static param functions.
 
@@ -17,7 +17,7 @@ A zero-config dynamic sitemap generator for **Next.js** apps using the **App Rou
 ## 📦 Installation
 
 ```bash
-npm install @grissly-man/next-dynamic-sitemap
+npm install next-dynamic-sitemap
 ```
 
 ---

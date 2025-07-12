@@ -1,5 +1,5 @@
 {
-  "name": "@grissly-man/next-dymamic-sitemap",
+  "name": "next-dymamic-sitemap",
   "repository": "https://github.com/grissly-man/next-dynamic-sitemap.git",
   "homepage": "https://grissly-man.com/projects/sitemap-generator",
   "version": "1.0.11",
@@ -18,7 +18,7 @@
   },
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "A lightweight, zero-touch sitemap generator for any nextjs project",
   "devDependencies": {
     "@types/node": "^24.0.10",
     "@types/xml2js": "^0.4.14",
