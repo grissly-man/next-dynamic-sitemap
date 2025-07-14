@@ -1,8 +1,23 @@
 import { BASE_URL } from "./constants";
-import { SiteMapURL } from "./types";
+import { SiteMap, SiteMapURL } from "./types";
+import { Builder } from "xml2js";
 
 export function generateURL(path: string) {
   return new URL(path, BASE_URL).toString();
+}
+
+export function generateXMLSitemap(urls: SiteMapURL[]): string {
+  const map: SiteMap = {
+    urlset: {
+      $: {
+        xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
+      },
+      url: urls,
+    },
+  };
+
+  const builder = new Builder();
+  return builder.buildObject(map);
 }
 
 export function parameterizePath(

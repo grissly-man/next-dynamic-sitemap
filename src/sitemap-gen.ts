@@ -1,10 +1,10 @@
 import path from "node:path";
 import { mkdir, stat, writeFile } from "fs/promises";
-import { Builder } from "xml2js";
 import { recurseAppDir } from "./generate-app";
 import { OUTFILE_ROOT, PUBLIC_DIR } from "./constants";
-import { SiteMap, SiteMapURL } from "./types";
+import { SiteMapURL } from "./types";
 import { recursePagesDir } from "./generate-pages";
+import { generateXMLSitemap } from "./util";
 
 const PAGES = "pages";
 const APP = "app";
@@ -17,20 +17,6 @@ async function dirExists(page: string) {
   } catch (error) {
     return false;
   }
-}
-
-export function generateXMLSitemap(urls: SiteMapURL[]): string {
-  const map: SiteMap = {
-    urlset: {
-      $: {
-        xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
-      },
-      url: urls,
-    },
-  };
-
-  const builder = new Builder();
-  return builder.buildObject(map);
 }
 
 export async function generateSitemapPublic() {
