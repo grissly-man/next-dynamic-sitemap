@@ -19,6 +19,20 @@ async function dirExists(page: string) {
   }
 }
 
+export function generateXMLSitemap(urls: SiteMapURL[]): string {
+  const map: SiteMap = {
+    urlset: {
+      $: {
+        xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
+      },
+      url: urls,
+    },
+  };
+
+  const builder = new Builder();
+  return builder.buildObject(map);
+}
+
 export async function generateSitemapPublic() {
   await Promise.all([
     mkdir(OUTFILE_ROOT, { recursive: true }),
@@ -65,17 +79,6 @@ export async function generateSitemapPublic() {
     urls.push(...segmentUrls);
   }
 
-  const map: SiteMap = {
-    urlset: {
-      $: {
-        xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
-      },
-      url: urls,
-    },
-  };
-
-  const builder = new Builder();
-  const xmlMap = builder.buildObject(map);
-
+  const xmlMap = generateXMLSitemap(urls);
   await writeFile(path.join(dir, "public/sitemap.xml"), xmlMap);
 }

@@ -16,7 +16,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "author": "",
+  "author": "grissly-man",
   "license": "ISC",
   "description": "A lightweight, zero-touch sitemap generator for any nextjs project",
   "devDependencies": {
