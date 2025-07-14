@@ -1,23 +1,8 @@
-import { BASE_URL, OUTFILE_ROOT, PAGE_SUFFIX_RE } from "./constants";
-import path from "node:path";
-import { build } from "esbuild";
+import { BASE_URL } from "./constants";
 import { SiteMapURL } from "./types";
 
 export function generateURL(path: string) {
   return new URL(path, BASE_URL).toString();
-}
-
-export async function bundlePage(page: string) {
-  const outfile = path.join(OUTFILE_ROOT, page.replace(PAGE_SUFFIX_RE, ".cjs"));
-  await build({
-    entryPoints: [path.join(process.cwd(), page)],
-    outfile,
-    platform: "node",
-    bundle: true,
-    format: "cjs",
-    sourcemap: false,
-  });
-  return import(outfile);
 }
 
 export function parameterizePath(

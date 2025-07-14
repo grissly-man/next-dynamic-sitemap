@@ -1,7 +1,8 @@
 import { readdir, stat } from "fs/promises";
 import path from "node:path";
-import { bundlePage, generateURL, parameterizePath } from "./util";
+import { generateURL, parameterizePath } from "./util";
 import { SiteMapURL } from "./types";
+import { bundlePage } from "./build";
 
 const PAGE_RE_TEXT = "page.[tj]sx?$";
 const PAGE_RE_SUFFIX_TEXT = `/?${PAGE_RE_TEXT}`;

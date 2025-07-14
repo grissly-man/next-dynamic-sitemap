@@ -1,8 +1,9 @@
 import { SiteMapURL } from "./types";
 import { readdir, stat } from "fs/promises";
 import path from "node:path";
-import { bundlePage, generateURL, parameterizePath } from "./util";
+import { generateURL, parameterizePath } from "./util";
 import { PAGE_SUFFIX_RE } from "./constants";
+import { bundlePage } from "./build";
 
 const API_PATH_RE = /^api\//;
 const META_PATH_RE = /^_[A-z0-9]+\.[tj]sx?$/;
