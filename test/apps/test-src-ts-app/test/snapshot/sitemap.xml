@@ -6,13 +6,13 @@
     <priority>1</priority>
   </url>
   <url>
-    <loc>https://mysite.local/static-path</loc>
-    <lastmod>2025-07-10T23:12:50.349Z</lastmod>
+    <loc>https://mysite.local/dynamic-path</loc>
+    <lastmod>2025-07-10T23:12:50.325Z</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mysite.local/dynamic-path</loc>
-    <lastmod>2025-07-10T23:12:50.325Z</lastmod>
+    <loc>https://mysite.local/static-path</loc>
+    <lastmod>2025-07-10T23:12:50.349Z</lastmod>
     <priority>0.8</priority>
   </url>
   <url>

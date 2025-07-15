@@ -1,18 +1,75 @@
 import { BASE_URL } from "./constants";
-import { SiteMap, SiteMapURL } from "./types";
+import { ChangeFreq, SiteMap, SiteMapURL } from "./types";
 import { Builder } from "xml2js";
+import { orderBy } from "lodash";
 
 export function generateURL(path: string) {
   return new URL(path, BASE_URL).toString();
 }
 
+function getChangeFreqRanking(changeFreq?: ChangeFreq) {
+  switch (changeFreq) {
+    case ChangeFreq.NEVER:
+      return 0;
+    case ChangeFreq.YEARLY:
+      return 1;
+    case ChangeFreq.MONTHLY:
+      return 2;
+    case ChangeFreq.WEEKLY:
+      return 3;
+    case ChangeFreq.DAILY:
+      return 4;
+    case ChangeFreq.HOURLY:
+      return 5;
+    case ChangeFreq.ALWAYS:
+      return 6;
+  }
+
+  return 0;
+}
+
 export function generateXMLSitemap(urls: SiteMapURL[]): string {
+  const urlMap: { [key: string]: SiteMapURL } = {};
+
+  for (const url of urls) {
+    if (!urlMap[url.loc]) {
+      urlMap[url.loc] = url;
+      continue;
+    }
+
+    const existing = urlMap[url.loc];
+
+    if (
+      !existing.lastmod ||
+      new Date(existing.lastmod) < new Date(url.lastmod || 0)
+    ) {
+      existing.lastmod = url.lastmod;
+    }
+
+    if (!existing.priority || existing.priority < (url.priority || 0)) {
+      existing.priority = url.priority;
+    }
+
+    if (
+      getChangeFreqRanking(existing.changefreq) <
+      getChangeFreqRanking(url.changefreq)
+    ) {
+      existing.changefreq = url.changefreq;
+    }
+  }
+
+  const dedupedUrls = orderBy(
+    Object.values(urlMap),
+    ["priority", "loc", "lastmod"],
+    ["desc", "asc", "desc"],
+  );
+
   const map: SiteMap = {
     urlset: {
       $: {
         xmlns: "http://www.sitemaps.org/schemas/sitemap/0.9",
       },
-      url: urls,
+      url: dedupedUrls,
     },
   };
 

@@ -6,13 +6,13 @@
     <priority>1</priority>
   </url>
   <url>
-    <loc>https://mysite.local/static-path</loc>
-    <lastmod>2025-07-10T23:12:50.168Z</lastmod>
+    <loc>https://mysite.local/dynamic-path</loc>
+    <lastmod>2025-07-10T23:12:50.108Z</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://mysite.local/dynamic-path</loc>
-    <lastmod>2025-07-10T23:12:50.108Z</lastmod>
+    <loc>https://mysite.local/static-path</loc>
+    <lastmod>2025-07-10T23:12:50.168Z</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
@@ -21,13 +21,13 @@
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://mysite.local/dynamic-path/page-2</loc>
-    <lastmod>1970-01-01T00:00:00.000Z</lastmod>
+    <loc>https://mysite.local/dynamic-path/page-1/sub-page-1</loc>
+    <lastmod>2025-07-12T21:53:33.307Z</lastmod>
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://mysite.local/dynamic-path/page-1/sub-page-1</loc>
-    <lastmod>2025-07-12T21:53:33.307Z</lastmod>
+    <loc>https://mysite.local/dynamic-path/page-2</loc>
+    <lastmod>1970-01-01T00:00:00.000Z</lastmod>
     <priority>0.4</priority>
   </url>
   <url>

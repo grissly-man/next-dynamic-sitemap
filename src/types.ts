@@ -11,7 +11,17 @@ export type SiteMapURLSet = {
 
 export type SiteMapURL = {
   loc: string;
-  changefreq?: "hourly";
+  changefreq?: ChangeFreq;
   priority?: number;
   lastmod?: string;
 };
+
+export enum ChangeFreq {
+  NEVER = "never",
+  YEARLY = "yearly",
+  MONTHLY = "monthly",
+  WEEKLY = "weekly",
+  DAILY = "daily",
+  HOURLY = "hourly",
+  ALWAYS = "always",
+}
