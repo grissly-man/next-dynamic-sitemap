@@ -136,6 +136,12 @@ If no config is provided, `sitemap-gen` will use sensible defaults.
 
 ---
 
+## 📘 License
+
+[ISC License](./LICENSE)
+
+---
+
 ## 💡 Tips
 
 - Want custom priority, changefreq, or more? That’s coming soon — or open an issue/PR!
