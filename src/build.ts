@@ -11,6 +11,37 @@ export async function bundlePage(page: string) {
     bundle: true,
     format: "cjs",
     sourcemap: false,
+    loader: {
+      '.woff': 'file',
+      '.woff2': 'file',
+      '.ttf': 'file',
+      '.eot': 'file',
+
+      '.png': 'file',
+      '.jpg': 'file',
+      '.jpeg': 'file',
+      '.gif': 'file',
+      '.webp': 'file',
+      '.avif': 'file',
+      '.ico': 'file',
+
+      '.svg': 'file',   // raw import only, not React components
+      '.txt': 'text',
+      '.md': 'text',
+      '.csv': 'text',
+      '.tsv': 'text',
+
+      '.mp3': 'file',
+      '.wav': 'file',
+      '.ogg': 'file',
+      '.flac': 'file',
+
+      '.mp4': 'file',
+      '.webm': 'file',
+      '.mov': 'file',
+
+      '.css': 'file',  // only if you want styles; omit if styles cause side effects you want to avoid
+    }
   });
   return import(outfile);
 }

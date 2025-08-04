@@ -1,3 +1,8 @@
+import 'material-symbols';
+import "../styles/globals.css";
+import img from "../assets/alien-svgrepo-com.svg"
+import Image from "next/image";
+
 export async function getStaticPaths() {
   return Promise.resolve({
     paths: [
@@ -18,5 +23,5 @@ export async function getStaticProps() {
 }
 
 export default function Slug() {
-  return <></>;
+  return <Image src={img} alt={"My Alien"}></Image>;
 }
