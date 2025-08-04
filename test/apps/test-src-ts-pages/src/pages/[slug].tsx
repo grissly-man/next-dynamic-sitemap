@@ -1,6 +1,6 @@
-import 'material-symbols';
+import "material-symbols";
 import "../styles/globals.css";
-import img from "../assets/alien-svgrepo-com.svg"
+import img from "../assets/alien-svgrepo-com.svg";
 import Image from "next/image";
 
 export async function getStaticPaths() {

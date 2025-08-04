@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "sitemap-gen && node test/test.js"
+    "test": "npm run test1 && npm run test2",
+    "test1": "sitemap-gen && node test/test.js",
+    "test2": "! sitemap-gen -c ./failing-sitemap-gen.config.js"
   },
   "dependencies": {
     "material-symbols": "^0.33.0",

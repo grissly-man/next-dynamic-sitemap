@@ -4,6 +4,7 @@ import path from "node:path";
 import { generateURL, parameterizePath } from "./util";
 import { PAGE_SUFFIX_RE } from "./constants";
 import { bundlePage } from "./build";
+import { Config } from "./config";
 
 const API_PATH_RE = /^api\//;
 const META_PATH_RE = /^_[A-z0-9]+\.[tj]sx?$/;
@@ -19,6 +20,7 @@ type Params = {
 async function introspectPage(
   root: string,
   page: string,
+  config?: Config,
 ): Promise<SiteMapURL[]> {
   const pagePath = path.join(root, page);
   const pageURLPath = page.replace(PAGE_SUFFIX_RE, "");
@@ -26,7 +28,7 @@ async function introspectPage(
   const lastmod = new Date(pageStats.mtime).toISOString();
 
   if (/\[/.test(pagePath)) {
-    const bundle = await bundlePage(pagePath);
+    const bundle = await bundlePage(pagePath, config);
     if (
       "getStaticPaths" in bundle &&
       typeof bundle.getStaticPaths === "function"
@@ -47,7 +49,10 @@ async function introspectPage(
   ];
 }
 
-export async function recursePagesDir(root: string): Promise<SiteMapURL[]> {
+export async function recursePagesDir(
+  root: string,
+  config?: Config,
+): Promise<SiteMapURL[]> {
   const contents = await readdir(path.join(process.cwd(), root), {
     recursive: true,
   });
@@ -57,7 +62,7 @@ export async function recursePagesDir(root: string): Promise<SiteMapURL[]> {
     .filter((p) => PAGE_SUFFIX_RE.test(p));
 
   const metadata = await Promise.all(
-    pages.map((page) => introspectPage(root, page)),
+    pages.map((page) => introspectPage(root, page, config)),
   );
   const metadataFlattened: SiteMapURL[] = [];
 

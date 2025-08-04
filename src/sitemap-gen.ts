@@ -5,6 +5,7 @@ import { OUTFILE_ROOT, PUBLIC_DIR } from "./constants";
 import { SiteMapURL } from "./types";
 import { recursePagesDir } from "./generate-pages";
 import { generateXMLSitemap } from "./util";
+import { Config } from "./config";
 
 const PAGES = "pages";
 const APP = "app";
@@ -19,7 +20,7 @@ async function dirExists(page: string) {
   }
 }
 
-export async function generateSitemapPublic() {
+export async function generateSitemapPublic(config?: Config) {
   await Promise.all([
     mkdir(OUTFILE_ROOT, { recursive: true }),
     mkdir(PUBLIC_DIR, { recursive: true }),
@@ -46,22 +47,22 @@ export async function generateSitemapPublic() {
     ]);
 
   if (hasNonSrcRootApp) {
-    const segmentUrls = await recurseAppDir(appDir);
+    const segmentUrls = await recurseAppDir(appDir, config);
     urls.push(...segmentUrls);
   }
 
   if (hasSrcRootApp) {
-    const segmentUrls = await recurseAppDir(appSrcDir);
+    const segmentUrls = await recurseAppDir(appSrcDir, config);
     urls.push(...segmentUrls);
   }
 
   if (hasNonSrcRootPages) {
-    const segmentUrls = await recursePagesDir(pagesDir);
+    const segmentUrls = await recursePagesDir(pagesDir, config);
     urls.push(...segmentUrls);
   }
 
   if (hasSrcRootPages) {
-    const segmentUrls = await recursePagesDir(pagesSrcDir);
+    const segmentUrls = await recursePagesDir(pagesSrcDir, config);
     urls.push(...segmentUrls);
   }
 
