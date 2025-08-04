@@ -8,7 +8,7 @@
     "sitemap-gen": "dist/bin-sitemap-gen.js"
   },
   "scripts": {
-    "test": "cd test && npm test",
+    "test": "cd test && npm test && echo \"tests succeeded\"",
     "build": "tsc",
     "format": "prettier -w .",
     "check-format": "prettier --check ."

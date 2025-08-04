@@ -80,6 +80,53 @@ This is used to fully qualify URLs in the sitemap.
 
 ---
 
+## CLI Options
+
+Run npx `sitemap-gen` --help to see available options:
+
+```
+Usage: sitemap-gen [options]
+
+Options:
+-c, --config <path>  Path to a custom config file (e.g. sitemap-gen.config.js)
+-h, --help           Display CLI usage help
+```
+
+---
+
+## Configuration
+
+You can optionally supply a configuration, if you need to overload default behaviors such as esbuild options.
+
+### Example: `sitemap-gen.config.js`
+
+```js
+/** @type {import('sitemap-gen').Config} */
+
+const config = {
+  esbuild: {
+    loader: {
+      ".css": "css",
+    },
+    // ... any other esbuild options
+  },
+};
+
+export default config;
+```
+
+### Usage
+
+Pass the config to the CLI using `-c` or `--config`:
+
+```
+npx sitemap-gen -c ./sitemap-gen.config.js
+```
+
+If no config is provided, `sitemap-gen` will use sensible defaults.
+
+---
+
 ## 🧪 Works With
 
 - ✅ Static Routes
