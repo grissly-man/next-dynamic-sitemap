@@ -7,7 +7,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    environment: publish
 
     steps:
       - uses: actions/checkout@v3
