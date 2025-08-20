@@ -19,8 +19,8 @@ async function introspectPage(
 ): Promise<SiteMapURL[]> {
   const pagePath = path.join(root, page);
   const pageURLPath = page
-    .replace(PAGE_SUFFIX_RE, "")
-    .replace(ROUTE_GROUP_RE, "");
+    .replace(ROUTE_GROUP_RE, "")
+    .replace(PAGE_SUFFIX_RE, "");
   const pageStats = await stat(path.join(process.cwd(), pagePath));
   const lastmod = new Date(pageStats.mtime).toISOString();
 
