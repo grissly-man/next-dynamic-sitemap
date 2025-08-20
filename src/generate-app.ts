@@ -10,6 +10,7 @@ const PAGE_RE_SUFFIX_TEXT = `/?${PAGE_RE_TEXT}`;
 
 const PAGE_RE = new RegExp(PAGE_RE_TEXT);
 const PAGE_SUFFIX_RE = new RegExp(PAGE_RE_SUFFIX_TEXT);
+const ROUTE_GROUP_RE = /\(.+?\)\//g;
 
 async function introspectPage(
   root: string,
@@ -17,7 +18,9 @@ async function introspectPage(
   config?: Config,
 ): Promise<SiteMapURL[]> {
   const pagePath = path.join(root, page);
-  const pageURLPath = page.replace(PAGE_SUFFIX_RE, "");
+  const pageURLPath = page
+    .replace(PAGE_SUFFIX_RE, "")
+    .replace(ROUTE_GROUP_RE, "");
   const pageStats = await stat(path.join(process.cwd(), pagePath));
   const lastmod = new Date(pageStats.mtime).toISOString();
 
