@@ -110,6 +110,11 @@ const config = {
     },
     // ... any other esbuild options
   },
+  exclude: [
+    "/my-secret-path",
+    /^\/my-secret-prefix\//,
+    // ... any other string or regex for exclusion
+  ],
 };
 
 export default config;
