@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "sitemap-gen && node test/test.js"
+    "test": "sitemap-gen -c ./sitemap-gen.config.js && node test/test.js"
   },
   "dependencies": {
     "react": "^19.0.0",
