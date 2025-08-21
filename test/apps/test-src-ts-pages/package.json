@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "npm run test1 && npm run test2",
-    "test1": "sitemap-gen && node test/test.js",
+    "test1": "sitemap-gen -c ./sitemap-gen.config.js && node test/test.js",
     "test2": "! sitemap-gen -c ./failing-sitemap-gen.config.js"
   },
   "dependencies": {

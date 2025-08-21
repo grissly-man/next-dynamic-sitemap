@@ -1,7 +1,7 @@
 import { SiteMapURL } from "./types";
 import { readdir, stat } from "fs/promises";
 import path from "node:path";
-import { generateURL, parameterizePath } from "./util";
+import { generateURL, parameterizePath, shouldExcludeURL } from "./util";
 import { PAGE_SUFFIX_RE } from "./constants";
 import { bundlePage } from "./build";
 import { Config } from "./config";
@@ -23,7 +23,10 @@ async function introspectPage(
   config?: Config,
 ): Promise<SiteMapURL[]> {
   const pagePath = path.join(root, page);
-  const pageURLPath = page.replace(PAGE_SUFFIX_RE, "");
+  let pageURLPath = page.replace(PAGE_SUFFIX_RE, "");
+  if (!pageURLPath.startsWith("/")) {
+    pageURLPath = `/${pageURLPath}`;
+  }
   const pageStats = await stat(path.join(process.cwd(), pagePath));
   const lastmod = new Date(pageStats.mtime).toISOString();
 
@@ -34,17 +37,23 @@ async function introspectPage(
       typeof bundle.getStaticPaths === "function"
     ) {
       const result: StaticPaths = await bundle.getStaticPaths();
-      return result.paths.map((params) =>
-        parameterizePath(pageURLPath, lastmod, params.params),
-      );
+      return result.paths
+        .map((params) =>
+          parameterizePath(pageURLPath, lastmod, params.params, config),
+        )
+        .filter((f) => !!f);
     }
+  }
+
+  if (shouldExcludeURL(pageURLPath, config?.exclude)) {
+    return [];
   }
 
   return [
     {
       loc: generateURL(pageURLPath),
       lastmod,
-      priority: pageURLPath ? 0.8 : 1, // home page gets higher priority
+      priority: !pageURLPath || pageURLPath === "/" ? 1 : 0.8, // home page gets higher priority
     },
   ];
 }

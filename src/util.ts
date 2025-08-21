@@ -2,6 +2,7 @@ import { BASE_URL } from "./constants";
 import { ChangeFreq, SiteMap, SiteMapURL } from "./types";
 import { Builder } from "xml2js";
 import { orderBy } from "lodash";
+import { Config } from "./config";
 
 export function generateURL(path: string) {
   return new URL(path, BASE_URL).toString();
@@ -26,6 +27,23 @@ function getChangeFreqRanking(changeFreq?: ChangeFreq) {
   }
 
   return 0;
+}
+
+export function shouldExcludeURL(
+  candidate: string,
+  excludeList: (string | RegExp)[] = [],
+): boolean {
+  for (const exclude of excludeList) {
+    if (exclude instanceof RegExp && exclude.test(candidate)) {
+      return true;
+    }
+
+    if (candidate === exclude) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 export function generateXMLSitemap(urls: SiteMapURL[]): string {
@@ -79,11 +97,12 @@ export function generateXMLSitemap(urls: SiteMapURL[]): string {
 
 export function parameterizePath(
   pagePath: string,
-  pageURLPath: string,
+  lastModified: string,
   params: Record<string, any>,
-): SiteMapURL {
+  config: Config = {},
+): SiteMapURL | undefined {
   let parameterizedPath = pagePath;
-  let lastmod = pageURLPath;
+  let lastmod = lastModified;
 
   for (let key in params) {
     const param = params[key];
@@ -95,6 +114,10 @@ export function parameterizePath(
 
   if (params.lastModified instanceof Date) {
     lastmod = params.lastModified.toISOString();
+  }
+
+  if (shouldExcludeURL(parameterizedPath, config?.exclude)) {
+    return;
   }
 
   return {

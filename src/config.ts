@@ -1,5 +1,6 @@
 import { BuildOptions } from "esbuild";
 
 export type Config = {
-  esbuild: BuildOptions;
+  esbuild?: BuildOptions;
+  exclude?: (string | RegExp)[];
 };
